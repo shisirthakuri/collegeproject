@@ -14,3 +14,18 @@
 .nav-link:hover::after {
   width: 100%;
 }
+
+/* Override nprogress bar color using Tailwind's blue-500 */
+#nprogress .bar {
+  background-color: #3b82f6 !important;
+  height: 4px;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #3b82f6, 0 0 5px #3b82f6;
+}
+
+#nprogress .spinner {
+  display: none; /* optional: hide spinner */
+}
+
