@@ -6,7 +6,7 @@ import { loginReducer } from "./auth/loginslice";
 
 const store = configureStore({
   reducer: {
-    login: loginReducer,
+    login:loginReducer,
   },
 });
 

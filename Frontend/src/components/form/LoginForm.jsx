@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../store/auth/loginThunk';
+import { loginAdmin} from '../../store/auth/loginThunk';
 import { useNavigate } from 'react-router-dom';
+import { setMessage } from '../../store/auth/loginslice';
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -10,7 +11,7 @@ const LoginForm = () => {
 
   const error = useSelector((state)=>state.login.error);
   const status = useSelector((state) => state.login.status);
-  const accessToken =useSelector((state)=>state.login.accessToken)
+  const message = useSelector((state)=>state.login.message)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,8 +20,7 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login(formData)).unwrap();
-      localStorage.setItem('accesstoken',accessToken)
+      await dispatch(loginAdmin(formData)).unwrap();
       navigate('/'); // redirect after successful login
     } catch (err) {
       // already handled in Redux; optional: log or toast
@@ -29,16 +29,17 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-100">
+    <div className="min-h-screen flex items-center justify-center bg-blue-100 flex-col">
+            <h1 className="mb-4 text-red-600 text-sm font-medium bg-gray-100 p-2 rounded">
+          only for Admin
+        </h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Login</h2>
-        
         {error && (
           <div className="mb-4 text-red-600 text-sm font-medium bg-red-100 p-2 rounded">
             {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">

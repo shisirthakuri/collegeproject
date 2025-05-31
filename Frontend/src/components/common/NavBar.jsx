@@ -1,9 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import college from '../../assets/collegeLogo.png';
-import Button from './Button';
+import React, { useState, useRef, useEffect } from "react";
+import { NavLink, useNavigation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import college from "../../assets/collegeLogo.png";
+import Button from "./Button";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutAdmin } from "../../store/auth/loginThunk";
+import { Settings } from "lucide-react";
+import { setMessage } from "../../store/auth/loginslice";
+import axios from "axios";
 
 const NavBar = () => {
   const [showAcademic, setShowAcademic] = useState(false);
@@ -13,8 +18,15 @@ const NavBar = () => {
   const galleryRef = useRef(null);
   const academicTimeoutRef = useRef(null);
   const galleryTimeoutRef = useRef(null);
-const navigate = useNavigation()
+  const navigate = useNavigation();
+  const[showbutton,setShowButton]=useState(false)
+  const accesstoken = localStorage.getItem("accesstoken")
+  const dispatch = useDispatch()
+ const message = useSelector((state)=>state.login.message)
   // Close dropdowns when clicking outside (for mobile click fallback)
+    const [file, setFile] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -27,21 +39,21 @@ const navigate = useNavigation()
         setShowGallery(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Close dropdowns and mobile menu on Escape key
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setShowAcademic(false);
         setShowGallery(false);
         setIsMobileMenuOpen(false);
       }
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // Handle hover with delay for dropdowns
@@ -82,8 +94,8 @@ const navigate = useNavigation()
 
   const linkClasses = ({ isActive }) =>
     isActive
-      ? 'text-blue-600 font-semibold p-2 rounded-md bg-gray-100'
-      : 'text-md font-medium p-2 rounded-md hover:bg-gray-100';
+      ? "text-blue-600 font-semibold p-2 rounded-md bg-gray-100"
+      : "text-md font-medium p-2 rounded-md hover:bg-gray-100";
 
   // Animation variants for Framer Motion
   const dropdownVariants = {
@@ -92,13 +104,47 @@ const navigate = useNavigation()
     exit: { opacity: 0, transition: { duration: 0.2 } },
   };
 
+  useEffect(() => {
+    if(message){
+      alert(message)
+     dispatch(setMessage(""));
+    }
+}, [message]);
+
+const logout = async () => {
+  try {
+     await dispatch(logoutAdmin()).unwrap();
+  } catch (error) {
+    alert(error.message || "Logout failed");
+    console.error(error);
+  }
+}
+
+  const handleUpload = async () => {
+    try {
+      const image=file
+      const res = await axios.post('http://localhost:3000/NarayanMavi/imageupload',{image},{
+        headers:{
+           "Content-Type": "multipart/form-data",
+        }
+      });
+      setUploadedImage(res.data); // full MongoDB doc: { url, public_id, _id }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full shadow-lg bg-background/95 backdrop-blur p-2 pl-10">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center ml-10">
           <NavLink to="/" className="font-bold text-xl flex items-center gap-3">
-            <img src={college} alt="College Logo" className="rounded-full h-12 w-12" />
+            <img
+              src={college}
+              alt="College Logo"
+              className="rounded-full h-12 w-12"
+            />
             <span>Narayan Mavi</span>
           </NavLink>
         </div>
@@ -106,16 +152,28 @@ const navigate = useNavigation()
         {/* Navigation */}
         <nav
           className={`${
-            isMobileMenuOpen ? 'flex' : 'hidden'
+            isMobileMenuOpen ? "flex" : "hidden"
           } md:flex flex-col md:flex-row gap-6 ml-0 md:ml-24 absolute md:static top-16 left-0 w-full md:w-auto bg-background/95 md:bg-transparent p-4 md:p-0 z-50`}
         >
-          <NavLink to="/" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
+          <NavLink
+            to="/"
+            className={linkClasses}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             Home
           </NavLink>
-          <NavLink to="/about" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
+          <NavLink
+            to="/about"
+            className={linkClasses}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             About Us
           </NavLink>
-          <NavLink to="/notice" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
+          <NavLink
+            to="/notice"
+            className={linkClasses}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             Notice
           </NavLink>
 
@@ -221,33 +279,60 @@ const navigate = useNavigation()
             </AnimatePresence>
           </div>
 
-          <NavLink to="/contact" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
+          <NavLink
+            to="/contact"
+            className={linkClasses}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             Contact Us
           </NavLink>
         </nav>
 
         {/* Auth Buttons and Mobile Menu Toggle */}
         <div className="flex items-center gap-x-4">
-          <NavLink to="/login">
+        <Settings onClick={()=>setShowButton((prev)=>!prev)}/>
+        {
+          showbutton && <div className="absolute ml-10">
+            {accesstoken ? (
+            <button
+              className="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md"
+              onClick={logout} 
+            >logout</button>
+          ) : (
+             <NavLink to="/login">
             <Button
               css="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md"
-              text="Log in" onClick={()=>navigate('login')}
+              text="login"
+              onClick={() => navigate("login")}
             />
           </NavLink>
-          <NavLink to="/signup">
-            <Button
-              css="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md"
-              text="Sign Up"
-            />
-          </NavLink>
+          )}
+          </div>
+        }
           <button
             className="md:hidden"
-            aria-label={isMobileMenuOpen ? 'Close Menu' : 'Open Menu'}
+            aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMobileMenuOpen ? <X size={23} color="black" /> : <Menu size={23} color="black" />}
-            <span className="sr-only">{isMobileMenuOpen ? 'Close menu' : 'Open menu'}</span>
+            {isMobileMenuOpen ? (
+              <X size={23} color="black" />
+            ) : (
+              <Menu size={23} color="black" />
+            )}
+            <span className="sr-only">
+              {isMobileMenuOpen ? "Close menu" : "Open menu"}
+            </span>
           </button>
+        <div>
+      <input type="file" onChange={e => setFile(e.target.files[0])} />
+      <button onClick={handleUpload}>Upload</button>
+      {uploadedImage && (
+        <>
+          <p>Image URL (Cloudinary): <a href={uploadedImage.url} target="_blank" rel="noreferrer">{uploadedImage.url}</a></p>
+          <img src={uploadedImage.url} alt="Uploaded" width="200" />
+        </>
+      )}
+    </div>
         </div>
       </div>
     </header>

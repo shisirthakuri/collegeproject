@@ -8,8 +8,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import LoadingSpinner from './components/common/LoadingSpinner';
-import { Provider } from 'react-redux';
-import store from './store/store';
+
 
 
 // Lazy-loaded components
@@ -82,10 +81,8 @@ const router = createBrowserRouter([
 // App Entry Point
 export default function App() {
   return (
-    <Provider store={store}>
       <Suspense fallback={<LoadingSpinner />}>
         <RouterProvider router={router} />
       </Suspense>
-    </Provider>
   );
 }
