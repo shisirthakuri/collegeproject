@@ -6,7 +6,6 @@ import college from "../../assets/collegeLogo.png";
 import Button from "./Button";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutAdmin } from "../../store/auth/loginThunk";
-import { Settings } from "lucide-react";
 import { setMessage } from "../../store/auth/loginslice";
 import axios from "axios";
 
@@ -14,18 +13,17 @@ const NavBar = () => {
   const [showAcademic, setShowAcademic] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);
+
   const academicRef = useRef(null);
   const galleryRef = useRef(null);
-  const academicTimeoutRef = useRef(null);
-  const galleryTimeoutRef = useRef(null);
+  const menuRef = useRef(null);
+
+  const accesstoken = localStorage.getItem("accesstoken");
+  const dispatch = useDispatch();
+  const message = useSelector((state) => state.login.message);
   const navigate = useNavigation();
-  const[showbutton,setShowButton]=useState(false)
-  const accesstoken = localStorage.getItem("accesstoken")
-  const dispatch = useDispatch()
- const message = useSelector((state)=>state.login.message)
-  // Close dropdowns when clicking outside (for mobile click fallback)
-    const [file, setFile] = useState(null);
-  const [uploadedImage, setUploadedImage] = useState(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,12 +36,15 @@ const NavBar = () => {
         setShowAcademic(false);
         setShowGallery(false);
       }
+
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMobileMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close dropdowns and mobile menu on Escape key
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -56,40 +57,41 @@ const NavBar = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Handle hover with delay for dropdowns
-  const handleMouseEnterAcademic = () => {
-    clearTimeout(academicTimeoutRef.current);
-    setShowAcademic(true);
-    setShowGallery(false); // Close other dropdown
+  useEffect(() => {
+    if (message) {
+      alert(message);
+      dispatch(setMessage(""));
+    }
+  }, [message, dispatch]);
+
+  const logout = async () => {
+    try {
+      await dispatch(logoutAdmin()).unwrap();
+    } catch (error) {
+      alert(error.message || "Logout failed");
+      console.error(error);
+    }
   };
 
-  const handleMouseLeaveAcademic = () => {
-    academicTimeoutRef.current = setTimeout(() => {
-      setShowAcademic(false);
-    }, 200); // 200ms delay
-  };
-
-  const handleMouseEnterGallery = () => {
-    clearTimeout(galleryTimeoutRef.current);
-    setShowGallery(true);
-    setShowAcademic(false); // Close other dropdown
-  };
-
-  const handleMouseLeaveGallery = () => {
-    galleryTimeoutRef.current = setTimeout(() => {
-      setShowGallery(false);
-    }, 200); // 200ms delay
-  };
-
-  // Click fallback for mobile
-  const handleClickAcademic = () => {
-    setShowAcademic(!showAcademic);
-    setShowGallery(false);
-  };
-
-  const handleClickGallery = () => {
-    setShowGallery(!showGallery);
-    setShowAcademic(false);
+  const handleUpload = async () => {
+    try {
+      const image = file;
+      const res = await axios.post(
+        "http://localhost:3000/NarayanMavi/imageupload",
+        { image },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setUploadedImage(res.data);
+      if(res.status === 200){
+        alert('upload photo successfully!')
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const linkClasses = ({ isActive }) =>
@@ -97,48 +99,20 @@ const NavBar = () => {
       ? "text-blue-600 font-semibold p-2 rounded-md bg-gray-100"
       : "text-md font-medium p-2 rounded-md hover:bg-gray-100";
 
-  // Animation variants for Framer Motion
   const dropdownVariants = {
     hidden: { opacity: 0, y: -10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
     exit: { opacity: 0, transition: { duration: 0.2 } },
   };
 
-  useEffect(() => {
-    if(message){
-      alert(message)
-     dispatch(setMessage(""));
-    }
-}, [message]);
-
-const logout = async () => {
-  try {
-     await dispatch(logoutAdmin()).unwrap();
-  } catch (error) {
-    alert(error.message || "Logout failed");
-    console.error(error);
-  }
-}
-
-  const handleUpload = async () => {
-    try {
-      const image=file
-      const res = await axios.post('http://localhost:3000/NarayanMavi/imageupload',{image},{
-        headers:{
-           "Content-Type": "multipart/form-data",
-        }
-      });
-      setUploadedImage(res.data); // full MongoDB doc: { url, public_id, _id }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   return (
-    <header className="sticky top-0 z-50 w-full shadow-lg bg-background/95 backdrop-blur p-2 pl-10">
-      <div className="container flex h-16 items-center justify-between">
-        {/* Logo and Title */}
-        <div className="flex items-center ml-10">
+    <header
+      ref={menuRef}
+      className="sticky top-0 z-50 w-full shadow-lg bg-white/95 backdrop-blur p-2 lg:pl-10"
+    >
+      <div className="container flex h-16 items-center justify-between lg:pb-0">
+        {/* Logo */}
+        <div className="flex items-center lg:ml-10">
           <NavLink to="/" className="font-bold text-xl flex items-center gap-3">
             <img
               src={college}
@@ -149,63 +123,49 @@ const logout = async () => {
           </NavLink>
         </div>
 
-        {/* Navigation */}
+        {/* Nav Links */}
         <nav
           className={`${
             isMobileMenuOpen ? "flex" : "hidden"
-          } md:flex flex-col md:flex-row gap-6 ml-0 md:ml-24 absolute md:static top-16 left-0 w-full md:w-auto bg-background/95 md:bg-transparent p-4 md:p-0 z-50`}
+          } md:flex flex-col mt-1 md:flex-row gap-3 lg:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 z-50`}
         >
-          <NavLink
-            to="/"
-            className={linkClasses}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          <NavLink to="/" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
             Home
           </NavLink>
-          <NavLink
-            to="/about"
-            className={linkClasses}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          <NavLink to="/about" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
             About Us
           </NavLink>
-          <NavLink
-            to="/notice"
-            className={linkClasses}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          <NavLink to="/notice" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
             Notice
           </NavLink>
 
           {/* Academic Dropdown */}
-          <div
-            className="relative"
-            ref={academicRef}
-            onMouseEnter={handleMouseEnterAcademic}
-            onMouseLeave={handleMouseLeaveAcademic}
-          >
+          <div className="relative w-full md:w-auto" ref={academicRef}>
             <button
-              className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left"
-              aria-haspopup="true"
-              aria-expanded={showAcademic}
-              onClick={handleClickAcademic}
+              className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left flex justify-between items-center"
+              onClick={() => {
+                setShowAcademic(!showAcademic);
+                setShowGallery(false);
+              }}
             >
-              Academic
+              Academic <span>{showAcademic ? "▲" : "▼"}</span>
             </button>
             <AnimatePresence>
               {showAcademic && (
                 <motion.div
-                  className="absolute top-full mt-2 w-40 bg-white shadow-md rounded-md py-2 z-[60] md:w-48"
+                  className={`flex flex-col ${
+                    isMobileMenuOpen
+                      ? "w-full bg-gray-100 mt-1 rounded-md"
+                      : "absolute top-full mt-2 w-40 md:w-48 bg-white shadow-md rounded-md py-2 z-50"
+                  }`}
                   variants={dropdownVariants}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  onMouseEnter={() => clearTimeout(academicTimeoutRef.current)}
-                  onMouseLeave={handleMouseLeaveAcademic}
                 >
                   <NavLink
                     to="/courses"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-200"
                     onClick={() => {
                       setShowAcademic(false);
                       setIsMobileMenuOpen(false);
@@ -215,7 +175,7 @@ const logout = async () => {
                   </NavLink>
                   <NavLink
                     to="/scholarships"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-200"
                     onClick={() => {
                       setShowAcademic(false);
                       setIsMobileMenuOpen(false);
@@ -229,34 +189,32 @@ const logout = async () => {
           </div>
 
           {/* Gallery Dropdown */}
-          <div
-            className="relative"
-            ref={galleryRef}
-            onMouseEnter={handleMouseEnterGallery}
-            onMouseLeave={handleMouseLeaveGallery}
-          >
+          <div className="relative w-full md:w-auto" ref={galleryRef}>
             <button
-              className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left"
-              aria-haspopup="true"
-              aria-expanded={showGallery}
-              onClick={handleClickGallery}
+              className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left flex justify-between items-center"
+              onClick={() => {
+                setShowGallery(!showGallery);
+                setShowAcademic(false);
+              }}
             >
-              Gallery
+              Gallery <span>{showGallery ? "▲" : "▼"}</span>
             </button>
             <AnimatePresence>
               {showGallery && (
                 <motion.div
-                  className="absolute top-full mt-2 w-40 bg-white shadow-md rounded-md py-2 z-[60] md:w-48"
+                  className={`flex flex-col ${
+                    isMobileMenuOpen
+                      ? "w-full bg-gray-100 mt-1 rounded-md"
+                      : "absolute top-full mt-2 w-40 md:w-48 bg-white shadow-md rounded-md py-2 z-50"
+                  }`}
                   variants={dropdownVariants}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  onMouseEnter={() => clearTimeout(galleryTimeoutRef.current)}
-                  onMouseLeave={handleMouseLeaveGallery}
                 >
                   <NavLink
                     to="/gallery/video"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-200"
                     onClick={() => {
                       setShowGallery(false);
                       setIsMobileMenuOpen(false);
@@ -266,7 +224,7 @@ const logout = async () => {
                   </NavLink>
                   <NavLink
                     to="/image"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-200"
                     onClick={() => {
                       setShowGallery(false);
                       setIsMobileMenuOpen(false);
@@ -279,60 +237,60 @@ const logout = async () => {
             </AnimatePresence>
           </div>
 
-          <NavLink
-            to="/contact"
-            className={linkClasses}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          <NavLink to="/contact" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>
             Contact Us
           </NavLink>
         </nav>
 
-        {/* Auth Buttons and Mobile Menu Toggle */}
-        <div className="flex items-center gap-x-4">
-        <Settings onClick={()=>setShowButton((prev)=>!prev)}/>
-        {
-          showbutton && <div className="absolute ml-10">
-            {accesstoken ? (
+          {/* Only show mobile menu toggle button if logged in */}
+          {accesstoken && (
             <button
-              className="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md"
-              onClick={logout} 
-            >logout</button>
-          ) : (
-             <NavLink to="/login">
-            <Button
-              css="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md"
-              text="login"
-              onClick={() => navigate("login")}
-            />
-          </NavLink>
+              className="md:hidden ml-10"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
+            >
+              {isMobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
+            </button>
           )}
-          </div>
-        }
-          <button
-            className="md:hidden"
-            aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X size={23} color="black" />
+        {/* Settings / Mobile Menu Toggle */}
+        <div className="flex items-center gap-x-4 mr-36 lg:mr-0">
+          <div className="absolute ml-4">
+            {accesstoken ? (
+              <button
+                className="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md"
+                onClick={logout}
+              >
+                Logout
+              </button>
             ) : (
-              <Menu size={23} color="black" />
+              <NavLink to="/login">
+                <Button
+                  css="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md "
+                  text="Login"
+                  onClick={() => navigate("login")}
+                />
+              </NavLink>
             )}
-            <span className="sr-only">
-              {isMobileMenuOpen ? "Close menu" : "Open menu"}
-            </span>
-          </button>
-        <div>
-      <input type="file" onChange={e => setFile(e.target.files[0])} />
-      <button onClick={handleUpload}>Upload</button>
-      {uploadedImage && (
-        <>
-          <p>Image URL (Cloudinary): <a href={uploadedImage.url} target="_blank" rel="noreferrer">{uploadedImage.url}</a></p>
-          <img src={uploadedImage.url} alt="Uploaded" width="200" />
-        </>
-      )}
-    </div>
+          </div>
+
+          {/* Upload Section */}
+          {/* {accesstoken && (
+            <div>
+              <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+              <button onClick={handleUpload} className="bg-red-400 ml-40">Upload</button>
+              {uploadedImage && (
+                <>
+                  <p>
+                    URL:{" "}
+                    <a href={uploadedImage.url} target="_blank" rel="noreferrer">
+                      {uploadedImage.url}
+                    </a>
+                  </p>
+                  <img src={uploadedImage.url} alt="Uploaded" width="200" />
+                </>
+              )}
+            </div>
+          )} */}
         </div>
       </div>
     </header>

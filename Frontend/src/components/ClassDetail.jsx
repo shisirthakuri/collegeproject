@@ -22,7 +22,7 @@ const ClassDetail = ({ classes }) => {
   const data = classDetail[classes - 1];
 
   return (
-    <div className="ml-20 mt-10">
+    <div className="lg:ml-20 mt-10">
       <div className="bg-white shadow-xl rounded-2xl p-8 max-w-xl border border-gray-200 hover:cursor-pointer">
         {/* Header for Grade 11 or 12 */}
         {(classes === 11 || classes === 12) && (

@@ -50,7 +50,7 @@ export default function ContactSection() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 w-[70rem] bg-white rounded-lg overflow-hidden shadow-lg ml-40 mt-20">
+    <div className="flex flex-col lg:flex-row gap-8 lg:w-[70rem] bg-white rounded-lg overflow-hidden shadow-lg lg:ml-40 mt-20">
       {/* Google Map (Left Side) */}
       <div className="w-full lg:w-1/2 h-[400px] lg:h-auto">
         <iframe

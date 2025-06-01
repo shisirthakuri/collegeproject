@@ -19,9 +19,9 @@ export default function DocumentListing() {
 
   return (
     <div className="container mx-auto p-4 mt-20">
-        <h1 className="text-2xl font-bold ml-36 mb-5">Notice</h1>
+        <h1 className="text-2xl font-bold lg:ml-36 mb-5">Notice</h1>
       <div className="overflow-x-auto">
-        <table className="w-[80%]  ml-36 border border-gray-300">
+        <table className="w-[80%] lg:ml-36 border border-gray-300">
           <thead>
             <tr className="bg-slate-100">
               <th className="py-4 px-6 text-left font-medium text-gray-700">S.N.</th>

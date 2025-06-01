@@ -23,9 +23,9 @@ const ImagePage = () => {
     ]
   return (
     <div>
-        <img src={img1} alt='no image found' className='w-[85rem] h-[40rem] ml-20 rounded-b-lg'/>
-       <h1 className="text-4xl font-serif mb-5 text-blue-500 ml-24 mt-10">Gallery</h1>
-       <div className=' flex gap-x-10 ml-24 ' onClick={()=>navigate('/imagesection')}>
+        <img src={img1} alt='no image found' className=' w-full h-[30rem]  object-cover  lg:w-[85rem] lg:h-[40rem] lg:ml-20 rounded-b-lg '/>
+       <h1 className="text-4xl font-serif mb-5 text-blue-500 lg:ml-24 mt-10">Gallery</h1>
+       <div className=' flex flex-col lg:flex-row  gap-y-6 lg:gap-x-10 lg:ml-24 ' onClick={()=>navigate('/imagesection')}>
        {
         image?.map((item)=>(
             <div key={item.id} className='w-100 h-70 bg-gray-200 rounded-2xl  bg-cover bg-center bg-no-repeat' style={{backgroundImage:`url(${item.image})`}}>

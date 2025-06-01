@@ -1,6 +1,6 @@
 export default function ScholarTable() {
   return (
-    <div className="max-w-4xl mx-auto p-6 font-sans ml-34 mt-12">
+    <div className="max-w-4xl lg:mx-auto p-6 font-sans lg:ml-34 mt-12">
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-blue-500 mb-6">General Scholarship Scheme</h2>
         <div className="overflow-x-auto">

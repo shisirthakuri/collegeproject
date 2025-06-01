@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAdmin} from '../../store/auth/loginThunk';
+import { loginAdmin } from '../../store/auth/loginThunk';
 import { useNavigate } from 'react-router-dom';
-import { setMessage } from '../../store/auth/loginslice';
+import { X } from 'lucide-react';
 
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: '', password: '' });
 
-  const error = useSelector((state)=>state.login.error);
+  const error = useSelector((state) => state.login.error);
   const status = useSelector((state) => state.login.status);
-  const message = useSelector((state)=>state.login.message)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,27 +20,39 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       await dispatch(loginAdmin(formData)).unwrap();
-      navigate('/'); // redirect after successful login
+      navigate('/');
     } catch (err) {
-      // already handled in Redux; optional: log or toast
       console.error('Login error:', err);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-100 flex-col">
-            <h1 className="mb-4 text-red-600 text-sm font-medium bg-gray-100 p-2 rounded">
-          only for Admin
-        </h1>
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
-        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200 px-4">
+      <div className="relative bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md">
+        {/* Close button */}
+        <button
+          onClick={() => navigate('/')}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+        >
+          <X size={20} />
+        </button>
+
+        {/* Title */}
+        <div className="mb-6 text-center">
+          <h1 className="text-3xl font-bold text-blue-700">Admin Login</h1>
+          <p className="text-sm text-gray-500 mt-1">Access restricted to authorized users only</p>
+        </div>
+
+        {/* Error */}
         {error && (
-          <div className="mb-4 text-red-600 text-sm font-medium bg-red-100 p-2 rounded">
+          <div className="mb-4 text-sm text-red-600 bg-red-100 border border-red-200 rounded-md px-4 py-2">
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
               Username
             </label>
@@ -51,13 +62,13 @@ const LoginForm = () => {
               id="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your username"
+              className="w-full px-4 py-2.5 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter username"
               required
             />
           </div>
 
-          <div className="mb-6">
+          <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
@@ -67,8 +78,8 @@ const LoginForm = () => {
               id="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
+              className="w-full px-4 py-2.5 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter password"
               required
             />
           </div>
@@ -76,11 +87,16 @@ const LoginForm = () => {
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold disabled:opacity-50"
+            className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition duration-200 disabled:opacity-50"
           >
             {status === 'loading' ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
+        {/* Footer */}
+        <p className="mt-6 text-xs text-center text-gray-400">
+          &copy; {new Date().getFullYear()} Narayanmavi School. All rights reserved.
+        </p>
       </div>
     </div>
   );

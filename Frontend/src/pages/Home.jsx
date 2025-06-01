@@ -45,11 +45,17 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full h-full overflow-hidden">
+    <div className="w-full h-full overflow-hidden flex flex-col">
+            
+      {/* Notices Section */}
+      <div className="w-full h-15 bg-blue-500 flex gap-x-4 items-center">
+        <Bell size={23} color="white" className="ml-5" />
+        <h1 className="font-bold text-white text-2xl">Notices</h1>
+      </div>
       {/* HeroSection */}
-      <motion.div ref={heroRef} className="h-[40rem] w-full" style={{ backgroundImage: `url(${img1})` }}>
+      <motion.div ref={heroRef} className="h-[40rem] w-full bg-center bg-cover" style={{ backgroundImage: `url(${img1})`,backgroundRepeat:'no-repeat'}}>
         <motion.div
-          className="w-full h-[40rem] inset-0 bg-black/60 pl-40 pt-40"
+          className="w-full h-[40rem] pt-20 inset-0 bg-black/60 lg:pl-40 lg:pt-40"
           initial={{ opacity: 0 }}
           animate={isHeroInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.5 }}
@@ -59,7 +65,7 @@ const Home = () => {
             variants={fadeUpVariants}
             initial="hidden"
             animate={isHeroInView ? 'visible' : 'hidden'}
-            className="font-bold text-white text-4xl"
+            className="font-bold text-white text-2xl lg:text-4xl ml-5 lg:ml-0"
           >
             Shree Narayan Mavi Secondary School Salyan
           </motion.h1>
@@ -68,7 +74,7 @@ const Home = () => {
             variants={fadeUpVariants}
             initial="hidden"
             animate={isHeroInView ? 'visible' : 'hidden'}
-            className="font-bold text-gray-50 text-lg mt-3"
+            className="lg:font-bold font-semibold text-gray-50 lg:text-lg mt-3 ml-5 lg:ml-0"
           >
             School is running different program since it's established
           </motion.h1>
@@ -77,6 +83,7 @@ const Home = () => {
             variants={fadeUpVariants}
             initial="hidden"
             animate={isHeroInView ? 'visible' : 'hidden'}
+            className='ml-5 flex items-center h-12'
           >
             <Button
               css="bg-blue-500 hover:bg-blue-600 p-3 text-white rounded-md text-lg mt-8"
@@ -86,15 +93,9 @@ const Home = () => {
         </motion.div>
       </motion.div>
 
-      {/* Notices Section */}
-      <div className="w-full h-15 bg-blue-500 flex gap-x-4 items-center">
-        <Bell size={23} color="white" className="ml-5" />
-        <h1 className="font-bold text-white text-2xl">Notices</h1>
-      </div>
-
       {/* Principle Section */}
       <motion.div
-        className="flex w-full mt-10 ml-20 gap-x-80"
+        className="flex  lg:flex-row flex-col w-full mt-10 lg:ml-20 lg:gap-x-60 "
         variants={containerVariants}
         initial="hidden"
         animate={isHeroInView ? 'visible' : 'hidden'}
@@ -104,14 +105,14 @@ const Home = () => {
           alt="Principle"
           variants={fadeUpVariants}
           custom={0}
-          className="w-[15rem] h-[18rem] rounded-md"
+          className="w-[15rem] h-[18rem] rounded-md ml-16 lg:ml-0"
         />
         <motion.div
           variants={fadeUpVariants}
           custom={1}
-          className="md:w-1/2 hover:shadow-indigo-300 hover:shadow-lg rounded-lg border w-[140rem]"
+          className="md:w-1/2 hover:shadow-indigo-300 hover:shadow-lg rounded-lg border lg:w-[50rem] mt-10 lg:mt-0"
         >
-          <div className="flex justify-center items-start flex-col p-5">
+          <div className="flex justify-center items-start flex-col p-5 ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="30"
@@ -127,7 +128,7 @@ const Home = () => {
               <path stroke="none" d="M0 0h24v24H0z"></path>
               <path d="M10 11H6a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 011 1v6c0 2.667-1.333 4.333-4 5M19 11h-4a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 011 1v6c0 2.667-1.333 4.333-4 5"></path>
             </svg>
-            <div className="flex justify-center items-start w-full flex-col text-left gap-5">
+            <div className="flex justify-center items-start w-full flex-col text-left gap-5 ">
               <p className="italic text-wrap">
                 Here goes the review submitted by user, Lorem ipsum dolor sit amet, consectetur
                 adipisicing elit. Aperiam mollitia et Lorem ipsum dolor sit, Lorem ipsum dolor sit amet
@@ -158,12 +159,12 @@ const Home = () => {
           <motion.p
             variants={fadeUpVariants}
             custom={1}
-            className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mt-5"
+            className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mt-5 ml-8 lg:ml-0"
           >
             Our platform provides all the tools you need to succeed in today's digital landscape.
           </motion.p>
         </motion.div>
-        <motion.div variants={fadeUpVariants} custom={2} className="flex w-full mt-20">
+        <motion.div variants={fadeUpVariants} custom={2} className="flex w-full lg:mt-20">
           <FacilitiesCard
             arr={[
               {
@@ -185,7 +186,6 @@ const Home = () => {
           />
         </motion.div>
       </motion.div>
-
       {/* Teachers Section */}
       <motion.div
         ref={teachersRef}
@@ -209,9 +209,8 @@ const Home = () => {
           Hear from tools that have successfully listed on our platform
         </motion.p>
       </motion.div>
-
       <motion.div
-        className="flex flex-wrap gap-4 pl-20"
+        className="flex flex-wrap gap-10 lg:gap-4 lg:pl-20"
         variants={containerVariants}
         initial="hidden"
         animate={isTeachersInView ? 'visible' : 'hidden'}

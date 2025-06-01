@@ -58,10 +58,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { data: 'Home data' };
-        },
       },
       { path: 'about', element: <About /> },
       { path: 'notice', element: <Notice /> },
