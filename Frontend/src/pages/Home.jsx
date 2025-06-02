@@ -210,7 +210,7 @@ const Home = () => {
         </motion.p>
       </motion.div>
       <motion.div
-        className="flex flex-wrap gap-10 lg:gap-4 lg:pl-20"
+        className="flex flex-wrap gap-10 lg:gap-4 lg:pl-16"
         variants={containerVariants}
         initial="hidden"
         animate={isTeachersInView ? 'visible' : 'hidden'}
