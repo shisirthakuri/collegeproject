@@ -1,49 +1,64 @@
 import axios from "axios";
-import store from "../store/store";
-import { updateAccessToken, logout } from "../store/auth/loginslice";
+
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
-  withCredentials: true, // important to send cookies
+  baseURL: import.meta.env.VITE_BASE_URL,
+  withCredentials: true, // send cookies automatically (refresh token)
 });
 
-// Attach access token to request headers
+// Attach access token from localStorage to every request if exists
 api.interceptors.request.use(
   (config) => {
-    const state = store.getState();
-    const token = state.auth.accessToken;
+    const token = localStorage.getItem("accesstoken");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error("Request error:", error);
+    return Promise.reject(error);
+  }
 );
 
-// Refresh access token on 401
+// Response interceptor to handle access token refresh on 401 errors
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.error("Response error:", error);
+
     const originalRequest = error.config;
 
+    // Check if error is 401 (Unauthorized) and request is not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log("401 Unauthorized detected, attempting token refresh...");
       originalRequest._retry = true;
       try {
-        localStorage.removeItem('token')
-        // No need to send refresh token manually — it's in the HTTP-only cookie
+        // Call refresh token endpoint to get a new access token
         const response = await axios.post(
-          "http://localhost:3000/refresh-token",
-          {},
-          { withCredentials: true }
+          `${import.meta.env.VITE_BASE_URL}/refresh-token`,
+          {}, // empty body
+          { withCredentials: true } // send refresh token cookie
         );
+
         const newAccessToken = response.data.accessToken;
-        localStorage.setItem('token',newAccessToken)
-        // Retry original request with new token
+        if (!newAccessToken) {
+          console.error("No new access token returned from refresh");
+          throw new Error("No new access token returned");
+        }
+
+        // Save the new token in localStorage
+        localStorage.setItem("accesstoken", newAccessToken);
+
+        // Update the Authorization header and retry original request
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        console.log("Retrying original request with new access token");
         return api(originalRequest);
-      } catch (err) {
-        store.dispatch(logout());
-        return Promise.reject(err);
+      } catch (refreshError) {
+        console.error("Refresh token failed or expired, logging out", refreshError);
+        // If refresh token expired or refresh request fails, logout user
+        return Promise.reject(refreshError);
       }
     }
 

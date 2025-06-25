@@ -20,7 +20,8 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       await dispatch(loginAdmin(formData)).unwrap();
-      navigate('/');
+      setFormData({password:"",username:""})
+      navigate('/AdminDashBoard',{ replace: true });
     } catch (err) {
       console.error('Login error:', err);
     }
@@ -92,7 +93,6 @@ const LoginForm = () => {
             {status === 'loading' ? 'Logging in...' : 'Login'}
           </button>
         </form>
-
         {/* Footer */}
         <p className="mt-6 text-xs text-center text-gray-400">
           &copy; {new Date().getFullYear()} Narayanmavi School. All rights reserved.

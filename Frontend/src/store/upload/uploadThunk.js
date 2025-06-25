@@ -1,31 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setUploadImage } from "./uploadSlice";
-import axios from "axios";
+import api from "../../api/api";
 
 export const uploadimage = createAsyncThunk(
   "upload/uploadimage",
-  async (images, { dispatch, rejectWithValue }) => {
+  async ({ images, ImageCategory }, { dispatch, rejectWithValue }) => {
     try {
-      // Create a FormData object and append all images
       const formData = new FormData();
-      images.forEach((image) => formData.append("images", image)); // Must match multer field name: images
+      images.forEach((image) => formData.append("images", image)); // Must match multer field name
+      formData.append("ImageCategory", ImageCategory); // Add category to the form
 
-      // Make the API request
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/imageupload`,
-        formData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await api.post("/imageupload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      // Handle success
       if (response.status === 200) {
-        dispatch(setUploadImage(response.data.images)); // Save uploaded image URLs or metadata to Redux
-        return { message: response.data.message };       // Return success message
+        dispatch(setUploadImage(response.data.images));
+        return { message: response.data.message };
       }
 
       return rejectWithValue("Upload failed unexpectedly");
@@ -36,3 +29,4 @@ export const uploadimage = createAsyncThunk(
     }
   }
 );
+

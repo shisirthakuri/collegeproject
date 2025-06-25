@@ -6,6 +6,7 @@ const Courses = () => {
     const setvalue=(text)=>{
         setShowClass(text)
     }
+    
   return (
     <div className='flex flex-col'>
       <img src={img1} alt='no image found' className=' w-full h-[30rem]  object-cover lg:w-[85rem] lg:h-[40rem] lg:ml-20 rounded-b-lg'/>

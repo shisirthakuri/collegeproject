@@ -11,11 +11,21 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'mern_uploads', // optional folder in Cloudinary
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp','pdf']
+  }
+});
+
+const pdf = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pdfs', // optional folder in Cloudinary
+    allowed_formats: ['pdf'],
+      resource_type: () => 'raw'
   }
 });
 
 module.exports = {
   cloudinary,
-  storage
+  storage,
+  pdf
 };

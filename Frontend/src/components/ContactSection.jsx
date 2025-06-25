@@ -4,6 +4,10 @@ import  React from "react"
 
 import { useState } from "react"
 import { Send } from "lucide-react"
+import { useDispatch, useSelector } from "react-redux"
+import { contactThunk } from "../store/contact/ContactThunk"
+import { useEffect } from "react"
+import { setRefresh } from "../store/contact/ContactSlice"
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -13,9 +17,10 @@ export default function ContactSection() {
     message: "",
   })
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitSuccess, setSubmitSuccess] = useState(false)
-
+  const dispatch = useDispatch()
+  const error = useSelector((state)=>state.contact.error)
+    const status = useSelector((state)=>state.contact.status)
+      const message = useSelector((state)=>state.contact.message)
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({
@@ -26,15 +31,8 @@ export default function ContactSection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    console.log("Form submitted:", formData)
-    setIsSubmitting(false)
-    setSubmitSuccess(true)
-
+dispatch(contactThunk(formData))
+dispatch(setRefresh())
     // Reset form after successful submission
     setFormData({
       name: "",
@@ -42,12 +40,15 @@ export default function ContactSection() {
       subject: "",
       message: "",
     })
-
-    // Reset success message after 3 seconds
-    setTimeout(() => {
-      setSubmitSuccess(false)
-    }, 3000)
   }
+
+  useEffect(()=>{
+    if(message){
+      alert(message)
+    }else if (error){
+alert(error)
+    }
+  },[dispatch,message,error])
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:w-[70rem] bg-white rounded-lg overflow-hidden shadow-lg lg:ml-40 mt-20">
@@ -67,11 +68,11 @@ export default function ContactSection() {
       <div className="w-full lg:w-1/2 p-8">
         <h2 className="text-2xl font-semibold mb-6">Get in Touch</h2>
 
-        {submitSuccess && (
+        {/* {submitSuccess && (
           <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md">
             Thank you for your message! We'll get back to you soon.
           </div>
-        )}
+        )} */}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -140,10 +141,10 @@ export default function ContactSection() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2"
+            disabled={status === 'pending'}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {isSubmitting ? (
+            {status === "pending" ? (
               "Sending..."
             ) : (
               <>
