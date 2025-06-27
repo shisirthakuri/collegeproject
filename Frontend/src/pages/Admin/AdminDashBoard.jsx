@@ -41,6 +41,16 @@ const AdminDashboard = () => {
           >
             Upload Circular Notice
           </NavLink>
+            <NavLink
+            to="contact-message"
+            className={({ isActive }) =>
+              isActive
+                ? 'text-blue-600 bg-blue-100 rounded px-3 py-2 font-medium'
+                : 'text-gray-700 hover:bg-gray-100 rounded px-3 py-2'
+            }
+          >
+            contact Message
+          </NavLink>
         </nav>
       </aside>
 

@@ -10,4 +10,10 @@ const contactus = async(req,res)=>{
      })
      res.status(200).json({message:"message send successfully"})
 }
-module.exports=contactus
+const contactusget = async(req,res)=>{
+   
+   const message =   await contact.find()
+     res.status(200).json({message:"message send successfully",message})
+}
+
+module.exports={contactus,contactusget}

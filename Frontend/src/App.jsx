@@ -15,6 +15,7 @@ import ScrollToTop from './components/ScrollToTop';
 import UploadImage from './components/notice/UploadImage';
 import NoticeBanner from './components/notice/NoticeBanner';
 import NoticeUpload from './components/notice/NoticeUpload';
+import ContactMessege from './components/notice/ContactMessege';
 
 const NavBar = lazy(() => import('./components/common/NavBar'));
 const Footer = lazy(() => import('./components/common/Footer'));
@@ -77,6 +78,7 @@ if (token && location.pathname === '/') {
               <Route path="upload-image" element={<UploadImage />} />
               <Route path="upload-banner" element={<NoticeBanner />} />
               <Route path="upload-circular" element={<NoticeUpload />} />
+               <Route path="contact-message" element={<ContactMessege />} />
             </Route>
 
             <Route path="/image" element={<ImagePage />} />
