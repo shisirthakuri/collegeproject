@@ -8,7 +8,7 @@ const Footer = () => {
         
         {/* Top Info Section: Centered */}
         <div className="flex justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center pb-14 border-b border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-10 text-center pb-14 border-b border-gray-200">
             <div>
               <h6 className="text-lg font-medium text-gray-900 mb-4">Address</h6>
               <p className="text-base text-gray-600">Kumakh Gaupalika Ward No.2 Salyan</p>

@@ -32,7 +32,6 @@ export default function ContactSection() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 dispatch(contactThunk(formData))
-dispatch(setRefresh())
     // Reset form after successful submission
     setFormData({
       name: "",
@@ -44,6 +43,7 @@ dispatch(setRefresh())
 
   useEffect(()=>{
     if(message){
+      dispatch(setRefresh())
       alert(message)
     }else if (error){
 alert(error)

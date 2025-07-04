@@ -26,8 +26,7 @@ const NavBar = () => {
 
   const navigate = useNavigate();
 
-  const[uploadHandle,setUploadHandle] = useState('upload')
-
+  const [uploadHandle, setUploadHandle] = useState("upload");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,8 +60,6 @@ const NavBar = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-
-
   useEffect(() => {
     if (message) {
       alert(message);
@@ -70,20 +67,16 @@ const NavBar = () => {
     }
   }, [message, dispatch]);
 
-
-  
-
   const logout = async () => {
     try {
       await dispatch(logoutAdmin()).unwrap();
-      navigate('/')
+      navigate("/");
     } catch (error) {
       alert(error.message || "Logout failed");
       console.error(error);
     }
   };
 
-  
   const linkClasses = ({ isActive }) =>
     isActive
       ? "text-blue-600 font-semibold p-2 rounded-md bg-gray-100"
@@ -96,98 +89,182 @@ const NavBar = () => {
   };
 
   return (
-<>
-  {
-    !accesstoken ?  <header ref={menuRef} className="sticky top-0 z-50 w-full shadow-lg bg-white/95 backdrop-blur p-2 lg:pl-10">
-      <div className="container flex h-16 items-center justify-between lg:pb-0">
-        <div className="flex items-center lg:ml-10">
-          <NavLink to="/" className="font-bold text-xl flex items-center gap-3">
-            <img src={college} alt="College Logo" className="rounded-full h-12 w-12" />
-            <span>Narayan Mavi</span>
-          </NavLink>
-        </div>
-
-        <nav className={`${
-          isMobileMenuOpen ? "flex" : "hidden"
-        } md:flex flex-col mt-1 md:flex-row gap-3 lg:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 z-50`}>
-          <NavLink to="/" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink>
-          <NavLink to="/about" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>About Us</NavLink>
-          <NavLink to="/notice" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>Notice</NavLink>
-
-          <div className="relative w-full md:w-auto" ref={academicRef}>
-            <button onClick={() => {
-              setShowAcademic(!showAcademic);
-              setShowGallery(false);
-            }} className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left flex justify-between items-center">
-              Academic {showAcademic ? <ChevronUp /> : <ChevronDown />}
-            </button>
-            <AnimatePresence>
-              {showAcademic && (
-                <motion.div className={`flex flex-col ${
-                  isMobileMenuOpen ? "w-full bg-gray-100 mt-1 rounded-md" : "absolute top-full mt-2 w-40 md:w-48 bg-white shadow-md rounded-md py-2 z-50"
-                }`} variants={dropdownVariants} initial="hidden" animate="visible" exit="exit">
-                  <NavLink to="/courses" className="block px-4 py-2 hover:bg-gray-200" onClick={() => {
-                    setShowAcademic(false); setIsMobileMenuOpen(false);
-                  }}>Courses</NavLink>
-                  <NavLink to="/scholarships" className="block px-4 py-2 hover:bg-gray-200" onClick={() => {
-                    setShowAcademic(false); setIsMobileMenuOpen(false);
-                  }}>Scholarships</NavLink>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="relative w-full md:w-auto" ref={galleryRef}>
-            <button onClick={() => {
-              setShowGallery(!showGallery);
-              setShowAcademic(false);
-            }} className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left flex justify-between items-center">
-              Gallery {showGallery ? <ChevronUp /> : <ChevronDown />}
-            </button>
-            <AnimatePresence>
-              {showGallery && (
-                <motion.div className={`flex flex-col ${
-                  isMobileMenuOpen ? "w-full bg-gray-100 mt-1 rounded-md" : "absolute top-full mt-2 w-40 md:w-48 bg-white shadow-md rounded-md py-2 z-50"
-                }`} variants={dropdownVariants} initial="hidden" animate="visible" exit="exit">
-                  <NavLink to="/gallery/video" className="block px-4 py-2 hover:bg-gray-200" onClick={() => {
-                    setShowGallery(false); setIsMobileMenuOpen(false);
-                  }}>Video</NavLink>
-                  <NavLink to="/image" className="block px-4 py-2 hover:bg-gray-200" onClick={() => {
-                    setShowGallery(false); setIsMobileMenuOpen(false);
-                  }}>Image</NavLink>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <NavLink to="/contact" className={linkClasses} onClick={() => setIsMobileMenuOpen(false)}>Contact Us</NavLink>
-        </nav>
-
-          <div className="mr-4 lg:mr-18">
-            {accesstoken ? (
-              <button className="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md ml-2 lg:ml-0" onClick={logout}>
-                Logout
-              </button>
-            ) : (
-              <NavLink to="/login">
-                <Button css="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md" text="Login" onClick={() => navigate("/login")} />
+    <>
+      {!accesstoken ? (
+        <header
+          ref={menuRef}
+          className="sticky top-0 z-50 w-full shadow-lg bg-white/95 backdrop-blur p-2 lg:pl-10"
+        >
+          <div className="container flex h-16 items-center justify-between lg:pb-0">
+            <div className="flex items-center lg:ml-10">
+              <NavLink
+                to="/"
+                className="font-bold text-xl flex items-center gap-3"
+              >
+                <img
+                  src={college}
+                  alt="College Logo"
+                  className="rounded-full h-12 w-12"
+                />
+                <span>Narayan Mavi</span>
               </NavLink>
-            )}
+            </div>
+
+            <nav
+              className={`${
+                isMobileMenuOpen ? "flex flex-col" : "hidden"
+              } md:flex md:flex-row gap-3 lg:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent p-4 md:p-0 z-40`}
+            >
+              <NavLink
+                to="/"
+                className={linkClasses}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to="/about"
+                className={linkClasses}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About Us
+              </NavLink>
+              <NavLink
+                to="/notice"
+                className={linkClasses}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Notice
+              </NavLink>
+
+              <div className="relative w-full md:w-auto" ref={academicRef}>
+                <button
+                  onClick={() => {
+                    setShowAcademic(!showAcademic);
+                    setShowGallery(false);
+                  }}
+                  className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left flex justify-between items-center"
+                >
+                  Academic {showAcademic ? <ChevronUp /> : <ChevronDown />}
+                </button>
+                <AnimatePresence>
+                  {showAcademic && (
+                    <motion.div
+                      className={`flex flex-col ${
+                        isMobileMenuOpen
+                          ? "w-full bg-gray-100 mt-1 rounded-md"
+                          : "absolute top-full mt-2 w-40 md:w-48 bg-white shadow-md rounded-md py-2 z-50"
+                      }`}
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                    >
+                      <NavLink
+                        to="/courses"
+                        className="block px-4 py-2 hover:bg-gray-200"
+                        onClick={() => {
+                          setShowAcademic(false);
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        Courses
+                      </NavLink>
+                      <NavLink
+                        to="/scholarships"
+                        className="block px-4 py-2 hover:bg-gray-200"
+                        onClick={() => {
+                          setShowAcademic(false);
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        Scholarships
+                      </NavLink>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="relative w-full md:w-auto" ref={galleryRef}>
+                <button
+                  onClick={() => {
+                    setShowGallery(!showGallery);
+                    setShowAcademic(false);
+                  }}
+                  className="text-md font-medium p-2 rounded-md hover:bg-gray-100 w-full text-left flex justify-between items-center"
+                >
+                  Gallery {showGallery ? <ChevronUp /> : <ChevronDown />}
+                </button>
+                <AnimatePresence>
+                  {showGallery && (
+                    <motion.div
+                      className={`flex flex-col ${
+                        isMobileMenuOpen
+                          ? "w-full bg-gray-100 mt-1 rounded-md"
+                          : "absolute top-full mt-2 w-40 md:w-48 bg-white shadow-md rounded-md py-2 z-50"
+                      }`}
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                    >
+                      <NavLink
+                        to="/gallery/video"
+                        className="block px-4 py-2 hover:bg-gray-200"
+                        onClick={() => {
+                          setShowGallery(false);
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        Video
+                      </NavLink>
+                      <NavLink
+                        to="/image"
+                        className="block px-4 py-2 hover:bg-gray-200"
+                        onClick={() => {
+                          setShowGallery(false);
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        Image
+                      </NavLink>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <NavLink
+                to="/contact"
+                className={linkClasses}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact Us
+              </NavLink>
+            </nav>
+<div className="flex items-center gap-4 mr-4 lg:mr-18">
+  {accesstoken ? (
+    <button className="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md" onClick={logout}>
+      Logout
+    </button>
+  ) : (
+    <NavLink to="/login">
+      <Button css="bg-blue-500 hover:bg-blue-600 w-20 h-10 text-white rounded-md" text="Login" onClick={() => navigate("/login")} />
+    </NavLink>
+  )}
+
+  <button
+    className="md:hidden"
+    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+    aria-label="Toggle menu"
+  >
+    {isMobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
+  </button>
+</div>
           </div>
-            <button className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle menu">
-              {isMobileMenuOpen ? <X size={23} /> : <Menu size={23} />}
-            </button>
-      </div>
-    </header>:null
-  }
-</>
-)
-}
+        </header>
+      ) : null}
+    </>
+  );
+};
+
 export default NavBar;
-
-
-
-
-
-
-

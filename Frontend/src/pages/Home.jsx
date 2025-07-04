@@ -58,9 +58,9 @@ console.log(teacherdata)
   return (
     <div className="w-full h-full overflow-hidden flex flex-col">        
    <div className="w-full h-14 bg-blue-600 flex items-center overflow-hidden relative">
-<div className='w-32 h-full bg-red- flex items-center justify-center z-20 bg-blue-600'>
-    <Bell size={23} color="white" className="ml-4 z-10" />
-  <h1 className="font-bold text-white text-xl ml-2 z-10">Notice:</h1>
+<div className=' w-26 lg:w-32 h-full bg-red- flex items-center justify-center z-20 bg-blue-600'>
+    <Bell size={23} color="white" className="lg:ml-4 z-10" />
+  <h1 className="font-bold text-white text-lg lg:text-xl ml-2 z-10">Notice:</h1>
 </div>
 
   {/* Scrolling notice text */}
